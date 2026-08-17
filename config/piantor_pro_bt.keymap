@@ -72,13 +72,13 @@
             display-name = "BASE";
             // | TAB  |  Q |  W |  E |  R |  T |     |  Y |  U |  I |  O |  P | DEL |
             // | ESC* |  A |  S | D/A| F/C|  G |     |  H |J/C |K/A |  L |  ; |  '  |
-            // | SHFT |  Z |  X |  C |  V |  B |     |  N |  M |  , |  . |  / |  -  |
+            // | SHFT |  Z |  X |  C |  V |  B |     |  N |  M |  , |  . |  / | SHFT|
             //          NUM  BKSP/SYM  GUI  |  ENT/NUM  SPC/SYM  SYM
             //   *ESC = tap Esc / hold NUMPAD
             bindings = <
 &kp TAB       &kp Q &kp W &kp E       &kp R        &kp T                       &kp Y &kp U        &kp I       &kp O   &kp P    &kp DEL
 &lt2 NPAD ESC &kp A &kp S &hml LALT D &hml LCTRL F &kp G                       &kp H &hmr RCTRL J &hmr RALT K &kp L   &kp SEMI &kp SQT
-&kp LSHFT     &kp Z &kp X &kp C       &kp V        &kp B                       &kp N &kp M        &kp COMMA   &kp DOT &kp FSLH &kp MINUS
+&kp LSHFT     &kp Z &kp X &kp C       &kp V        &kp B                       &kp N &kp M        &kp COMMA   &kp DOT &kp FSLH &kp RSHFT
                                 &mo NUM  &lt2 SYM BSPC  &kp LGUI    &lt2 NUM RET  &lt2 SYM SPACE  &mo SYM
             >;
         };
