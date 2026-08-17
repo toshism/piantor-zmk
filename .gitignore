@@ -2,3 +2,6 @@
 
 # local reference clone (not part of this config)
 keebart-upstream/
+
+# built firmware artifacts
+firmware/
