@@ -1,0 +1,4 @@
+.DS_Store
+
+# local reference clone (not part of this config)
+keebart-upstream/
