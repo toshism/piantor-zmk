@@ -1,25 +1,29 @@
 # Piantor Pro BT Layout - Design Spec
 
 **Date:** 2026-08-17
-**Goal:** Port the author's Gergo (QMK) keymap onto a Piantor Pro BT (42-key, ZMK), de-tangling content to fit fewer keys while preserving muscle memory.
+**Goal:** Port the author's Gergo (QMK) keymap onto a Piantor Pro BT (42-key, ZMK), preserving muscle memory.
+
+> **Design note (history):** An initial version split the Gergo's combined layers into
+> five smaller ones (NUM/SYM/NAV/FUN/NUMPAD). In testing that fought muscle memory - e.g.
+> holding Backspace no longer gave symbols. The design was **realigned to match the Gergo's
+> combined layers** (SYM = SYMB, NUM = NUMB). This document describes the final, shipped layout.
 
 ## Source
 
 - Gergo keymap: `~/dev/projects/qmk/qmk_firmware/keyboards/gboards/gergo/keymaps/toshism/keymap.c`
-- Target: Piantor Pro BT - 3x6 columnar split + 3 thumbs per side = 42 keys, runs **ZMK**.
+- Target: Piantor Pro BT - 3x6 columnar split + 3 thumbs per side = 42 keys, runs **ZMK** (Keebart `keebart_nrf52840`).
 
-## Hardware constraints driving the port
+## Hardware constraints
 
 - Gergo alpha block is already 3x6/side -> **alphas + home-row mods map 1:1**.
-- Gergo had **4 thumbs/side**; Piantor has **3/side** -> one thumb per side had to be dropped/repurposed.
-- Gergo inner "middle column" keys (`CLOSE_FRAME`, `TG(GAME)`, mouse `BTN1/BTN2`, extra inner `BSPC`) have **no physical home** -> dropped from base.
-- On the Piantor the **outer thumbs are reachable** (they weren't on the Gergo), so they became first-class layer keys.
+- Gergo had **4 thumbs/side**; Piantor has **3/side**.
+- Gergo inner "middle column" keys (`CLOSE_FRAME`, `TG(GAME)`, mouse buttons, extra inner `BSPC`) have no home -> dropped from base.
+- Piantor outer thumbs are reachable (unlike the Gergo), so they became usable layer keys.
 
-## Design principles applied
+## Guiding principle: muscle memory first
 
-- **Cross-hand layers:** every layer is held with one hand and typed with the other (matches how the Gergo felt).
-- **Muscle memory first:** where the author has ingrained habits (numpad grid, desktop-switch chord, erase keys), the Gergo behavior is preserved exactly.
-- **Hot keys stay plain:** Space is a plain key (no layer-tap) to avoid hold-latency / misfire on the most-used key.
+Where the author has ingrained habits (which thumb reaches which layer, the numpad grid,
+the herbstluftwm desktop-switch chord, the erase keys), the Gergo behavior is preserved exactly.
 
 ---
 
@@ -33,107 +37,104 @@
 ```
 
 - `ESC*` (left-pinky home-row) = layer-tap: **tap = Esc, hold = NUMPAD** (mirrors Gergo `LT(TEN, Tab)`).
-- Home-row mods (unchanged from Gergo): `D = LAlt`, `F = LCtl`, `J = RCtl`, `K = RAlt`.
-- `DEL` at top-right (stock-Piantor position for backspace; author wanted a proper Delete there - something missing on the Gergo).
-- `\` (backslash) was displaced by `DEL`; it now lives on the SYM layer.
-- `LSFT` on left-pinky bottom row (Gergo position). Right-hand Shift intentionally omitted for now (see Deferred).
+- Home-row mods (positional, unchanged from Gergo): `D = LAlt`, `F = LCtl`, `J = RCtl`, `K = RAlt`.
+- `DEL` at top-right (stock-Piantor Backspace position; a proper Delete the Gergo lacked).
+- `\` (backslash) is displaced by `DEL` and lives on the SYM layer.
+- `LSFT` on left-pinky bottom. Right-hand Shift intentionally omitted for now (see Deferred).
 
-### Thumb cluster
+### Thumb cluster (matches Gergo muscle memory)
 
 ```
- L-out        L-mid            L-in        |  R-in            R-mid    R-out
- NUM (hold)   BKSP / NAV       SUPER       |  ENTER / FUN     SPACE    SYM (hold)
- momentary    tap=Bksp,hold=   plain LGUI  |  tap=Enter,      plain    momentary
-              NAV layer                    |  hold=FUN layer
+ L-out        L-mid          L-in    |  R-in           R-mid           R-out
+ NUM (hold)   BKSP / SYM     SUPER   |  ENTER / NUM    SPACE / SYM     SYM (hold)
+ momentary    tap=Bksp,      plain   |  tap=Enter,     tap=Space,      momentary
+              hold=SYM       LGUI    |  hold=NUM       hold=SYM
 ```
 
-- `SUPER` (L-in, plain `LGUI`) preserves the **herbstluftwm desktop-switch chord**: hold Super + right-hand `U I O` (top) / `M , .` (bottom) = `Super+{U,I,O,M,comma,dot}`, interpreted by hlwm. No keyboard-side config needed - relies on base QWERTY + Super on a thumb. None of those six keys collide with a home-row mod.
-- Backspace = left thumb (L-mid). Delete = top-right. Erase keys split across hands.
+- **SYM** reachable from Backspace (L-mid), Space (R-mid), and R-out - like the Gergo, where both `LT(SYMB,BSPC)` and `LT(SYMB,SPC)` reached SYMB.
+- **NUM** reachable from Enter (R-in) and L-out - like the Gergo `LT(NUMB,ENT)` / `LT(NUMB,ESC)`.
+- **SUPER** (L-in, plain `LGUI`) preserves the **herbstluftwm desktop-switch chord**: hold Super +
+  right-hand `U I O` (top) / `M , .` (bottom). Interpreted by hlwm; needs no keyboard-side config.
+  None of those six keys collide with a home-row mod.
+- Backspace = left thumb, Delete = top-right (erase keys split across hands).
 
 ---
 
-## Layers
+## Layers (recombined to match the Gergo)
 
-`.` = transparent (falls through to BASE). Each layer names its activation key.
+`.` = transparent (falls through to BASE).
 
-### NUM - hold `L-out` (left outer thumb)
-Number row, faithful to Gergo (1-5 left, 6-0 right).
-```
- `    1   2   3   4   5        6   7   8   9   0   =
- .    .   .   .   .   .        .   .   .   .   -   .
- .    .   .   .   .   .        .   .   .   .   .   .
-```
-
-### SYM - hold `R-out` (right outer thumb)
-Symbols from Gergo SYMB. `\` relocated here (displaced from base by DEL).
+### SYM - hold Backspace / Space / R-out   (= Gergo SYMB)
 ```
  !    @   {   }   |   .        .   .   .   \   .   .
  #    $   (   )   `   .        +   -   /   *   %   _
  %    ^   [   ]   ~   .        &   =   .   .   .   .
 ```
-- **Dropped:** Gergo SYMB's `Alt+1..6` (Stumpwm workspace macros) on the top-right row. Assumed obsolete; re-add if still used.
+Dropped from the Gergo original: the `Alt+1..6` Stumpwm workspace macros.
 
-### NAV - hold `L-mid` (the Backspace thumb)
-Arrows on the right home row, exactly like Gergo (`H J K L` = left/down/up/right).
+### NUM - hold Enter / L-out   (= Gergo NUMB: numbers + F-keys + arrows, one layer)
 ```
- .    .   .   .   .   .        .    PgUp Home End   .   DEL
- .    .   .   .   .   .        <-   v    ^    ->    .   .
- .    .   .   .   .   .        .    PgDn .    .     .   .
+ .    1   2   3   4   5        6    7    8    9    0    .
+ F1   F2  F3  F4  F5  F6       ←    ↓    ↑    →    Vol- Vol+
+ F7   F8  F9  F10 F11 F12      Home PgDn PgUp End  .    .
 ```
+Numbers on top, F-keys on the left hand, arrows/volume on the right - exactly the Gergo `NUMB` split.
+(Gergo's bottom-right mouse macros were dropped; Home/End/PgUp/PgDn added in their place.)
 
-### FUN - hold `R-in` (the Enter thumb)
-F-keys on the left hand (Gergo placement), media/volume on the right.
+### NUMPAD - hold left-pinky (Esc)   (= Gergo TEN + Bluetooth/system keys)
 ```
- F1   F2  F3  F4  F5  .        .    .     .     .     .    .
- F6   F7  F8  F9  F10 .        .    Mute  Vol-  Vol+  Play .
- F11  F12 .   .   .   .        .    .     .     .     .    .
+ .    .    .    .    .    .          .   7   8   9   .   .      (U I O)
+ .    BT0  BT1  BT2  BT3  BT4        0   4   5   6   .   .      (H J K L)
+ .    BCLR RGB  RST  BOOT UNLK       .   1   2   3   .   .      (N M , .)
 ```
-
-### NUMPAD - hold `ESC` (left-pinky layer-tap)
-Right-hand 3x3 calculator grid under index/middle/ring - the author's ingrained Gergo numpad.
-```
- .    .   .   .   .   .        .    7   8   9   .   .      (U  I  O)
- .    .   .   .   .   .        0    4   5   6   .   .      (H  J  K  L)
- .    .   .   .   .   .        .    1   2   3   .   .      (N  M  ,  .)
-```
-- `7/8/9` on `U/I/O`, `4/5/6` on `J/K/L`, `1/2/3` on `M/,/.`.
-- `0` on `H`, `.` on `N` (inner index column). Trial placement - easy to swap.
+- Right hand: the Gergo numpad grid - `7/8/9` on `U/I/O`, `4/5/6` on `J/K/L`, `1/2/3` on `M/,/.`,
+  `0` on `H`, `.` on `N`.
+- Left hand: Bluetooth + system keys (the Gergo had none - wired board). `BT_SEL 0-4` on `A-G`;
+  `BT_CLR`, `RGB_TOG`, `sys_reset`, `bootloader`, `studio_unlock` on `Z-B`.
 
 ---
 
 ## Layer / activation summary
 
-| Layer  | Activation            | Typed with | Cross-hand |
-|--------|-----------------------|------------|------------|
-| NUM    | L-out thumb (hold)    | both hands | -          |
-| SYM    | R-out thumb (hold)    | both hands | -          |
-| NAV    | L-mid thumb (Bksp hold) | right hand | yes      |
-| FUN    | R-in thumb (Enter hold) | left hand  | yes      |
-| NUMPAD | left-pinky (Esc hold)   | right hand | yes      |
+| Layer  | Activation                              | Gergo equivalent |
+|--------|-----------------------------------------|------------------|
+| SYM    | Backspace hold, Space hold, R-out hold  | SYMB             |
+| NUM    | Enter hold, L-out hold                  | NUMB             |
+| NUMPAD | left-pinky (Esc) hold                   | TEN              |
+
+Handy combos that moved onto the NUMPAD layer (hold left-pinky Esc, then):
+- `+ V` -> **bootloader** (KEEBART drive for flashing)
+- `+ B` -> **studio_unlock** (ZMK Studio)
+- `+ A..G` -> **switch Bluetooth profile** 0-4
 
 ---
 
 ## Deferred / open items
 
-- **GAME layer** - dropped for now; author will likely revisit. Was a WASD-style gaming layout toggled by a Gergo inner key. Will need a combo or a spot on another layer to reach it.
-- **Right-hand Shift** - only left-pinky Shift exists, so left-hand capitals are awkward. Left as-is per author; candidate future fix: home-row-mod shift on `;`, a one-shot shift, or a thumb.
-- **SYM `Alt+1..6` macros** - dropped; confirm they're truly obsolete.
-- **Space thumb hold** - currently unused (Space is plain). Available to host another layer later if wanted.
-- **`0`/`.` numpad placement** (`H`/`N`) - trial; may swap.
-- **Home-row mod / layer-tap tuning** - see implementation notes.
+- **GAME layer** - dropped for now; author will likely revisit (WASD-style gaming layout).
+- **Right-hand Shift** - only left-pinky Shift exists; left-hand capitals are awkward. Candidate future
+  fix: home-row-mod shift, a one-shot shift, or a thumb.
+- **nice_view left screen** - the stock ZMK `nice_view` widget devotes its whole middle third to the
+  BT-profile picker (five circles), which is wasted space here. Reclaiming it needs a custom status
+  widget (copy a `nice_view`-style shield into the repo, edit `widgets/status.c`). Paused mid-decision
+  on what to show instead (big layer name / battery % / logo / blank).
+- **`Alt+1..6` Stumpwm macros** - dropped from SYM; confirm truly obsolete.
 
 ---
 
-## Implementation notes (for the ZMK build)
+## Implementation / flash notes (ZMK)
 
-- Target firmware is **ZMK** (not QMK). This design becomes a `zmk-config` repo: `config/piantor.keymap` + `config/piantor.conf` + `build.yaml`. Confirm the exact ZMK **board/shield** for the Piantor Pro BT before building.
-- **Home-row mods** (`D/F/J/K`) and **layer-taps** (Esc, Bksp, Enter) are `hold-tap` behaviors in ZMK. They need tuning to avoid misfires during fast typing:
-  - Set a sensible `tapping-term-ms` (~180-220).
-  - Consider `flavor = "balanced"` or `"tap-preferred"`; for home-row mods, positional hold-tap (`hold-trigger-key-positions`) strongly reduces same-hand misfires.
-- **Momentary layers** (NUM on L-out, SYM on R-out) = `&mo`.
-- The **desktop-switch chord** needs nothing special in ZMK - it's plain `Super` (a thumb `&kp LGUI`) + base QWERTY, interpreted by herbstluftwm.
-- Verify `0`/`.` and media keycodes render correctly on Linux/hlwm.
-
-## Next step
-
-Proceed to an implementation plan (writing-plans): bootstrap the zmk-config, encode BASE + 5 layers, tune hold-taps, build, flash, and validate the muscle-memory items (numpad grid, desktop chord, erase keys).
+- Firmware is **ZMK**. Repo: `~/dev/projects/piantor-zmk` (-> `github.com/toshism/piantor-zmk`).
+  Needs `boards/arm/piantor_pro_bt/` copied from `github.com/Keebart/zmk-config` (module.yml `board_root: .`);
+  without it every build target fails.
+- **Build:** push -> GitHub Actions builds the `.uf2`s (not local). `gh run download <id>` fetches artifacts.
+  `nice_view-piantor_pro_bt_left-zmk.uf2` is the real firmware; `settings_reset-*` wipes BT bonds.
+- **Flash (LEFT/central half only, for keymap changes):**
+  1. Enter bootloader via **key combo** (double-tap physical reset was unreliable): hold **left-pinky
+     (Esc/NUMPAD) + `V`**.
+  2. Board mounts as `/dev/sda` label `KEEBART`; `udisksctl mount -b /dev/sda` -> `/media/tosh/KEEBART`.
+  3. `cp` the left `.uf2` onto it; it auto-ejects and reboots. BT bonds survive a normal keymap flash.
+- Flashing needs a **USB data cable** (bootloader only shows over USB). The Gergo is often also plugged in -
+  make sure combos land on the Piantor.
+- **Home-row mods** and **layer-taps** are ZMK `hold-tap` behaviors with positional triggers +
+  `tapping-term-ms`/`quick-tap-ms`/`require-prior-idle-ms` tuning to avoid misfires.
