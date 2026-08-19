@@ -129,11 +129,18 @@ Handy combos that moved onto the NUMPAD layer (hold left-pinky Esc, then):
   without it every build target fails.
 - **Build:** push -> GitHub Actions builds the `.uf2`s (not local). `gh run download <id>` fetches artifacts.
   `nice_view-piantor_pro_bt_left-zmk.uf2` is the real firmware; `settings_reset-*` wipes BT bonds.
-- **Flash (LEFT/central half only, for keymap changes):**
-  1. Enter bootloader via **key combo** (double-tap physical reset was unreliable): hold **left-pinky
-     (Esc/NUMPAD) + `V`**.
-  2. Board mounts as `/dev/sda` label `KEEBART`; `udisksctl mount -b /dev/sda` -> `/media/tosh/KEEBART`.
-  3. `cp` the left `.uf2` onto it; it auto-ejects and reboots. BT bonds survive a normal keymap flash.
+- **Flash (LEFT/central half only, for keymap changes):** use `scripts/flash.sh`.
+  1. Run `scripts/flash.sh` **first** (defaults to the left half) - it polls for the bootloader and
+     waits. Run it *before* entering bootloader, because the board stops working as a keyboard once
+     it's in bootloader mode (this is the ZMK equivalent of `qmk flash` waiting for the device).
+  2. *Then* enter bootloader: hold **left-pinky (Esc/NUMPAD) + `V`** (double-tap physical reset was
+     unreliable). The board mounts as `/dev/sda` label `KEEBART`.
+  3. The script mounts it, copies the `.uf2`, and exits; the board auto-reboots. BT bonds survive a
+     normal keymap flash. (`cp`/`sync` may report the device disconnecting mid-write - that's success.)
+  - Other targets: `scripts/flash.sh right` (peripheral), `scripts/flash.sh reset` (settings-reset,
+    wipes BT bonds). Env overrides: `LABEL=` (drive label), `TIMEOUT=` (seconds).
+  - Manual fallback: `udisksctl mount -b /dev/sda` -> `/media/tosh/KEEBART`, then `cp` the left `.uf2`
+    onto it.
 - Flashing needs a **USB data cable** (bootloader only shows over USB). The Gergo is often also plugged in -
   make sure combos land on the Piantor.
 - **Home-row mods** and **layer-taps** are ZMK `hold-tap` behaviors with positional triggers +
