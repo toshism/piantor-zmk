@@ -66,9 +66,9 @@ the herbstluftwm desktop-switch chord, the erase keys), the Gergo behavior is pr
 
 ### SYM - hold Backspace / Space / R-out   (= Gergo SYMB)
 ```
- !    @   {   }   |   .        .   .   .   \   .   .
- #    $   (   )   `   .        +   -   /   *   %   _
- %    ^   [   ]   ~   .        &   =   .   .   .   .
+ .    !   @   {   }   |        .   .   .   \   .   .
+ .    #   $   (   )   `        +   -   /   *   %   _
+ .    %   ^   [   ]   ~        &   =   .   .   .   .
 ```
 Dropped from the Gergo original: the `Alt+1..6` Stumpwm workspace macros.
 

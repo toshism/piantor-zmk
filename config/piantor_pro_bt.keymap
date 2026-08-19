@@ -90,9 +90,9 @@
             // |  # |  $ |  ( |  ) |  ` |   |  + |  - |  / |  * |  % |  _ |
             // |  % |  ^ |  [ |  ] |  ~ |   |  & |  = |    |    |    |    |
             bindings = <
-&kp EXCL  &kp AT    &kp LBRC &kp RBRC &kp PIPE  &trans     &trans   &trans    &trans   &kp BSLH  &trans    &trans
-&kp HASH  &kp DLLR  &kp LPAR &kp RPAR &kp GRAVE &trans     &kp PLUS &kp MINUS &kp FSLH &kp ASTRK &kp PRCNT &kp UNDER
-&kp PRCNT &kp CARET &kp LBKT &kp RBKT &kp TILDE &trans     &kp AMPS &kp EQUAL &trans   &trans    &trans    &trans
+&trans &kp EXCL  &kp AT    &kp LBRC &kp RBRC &kp PIPE   &trans   &trans    &trans   &kp BSLH  &trans    &trans
+&trans &kp HASH  &kp DLLR  &kp LPAR &kp RPAR &kp GRAVE  &kp PLUS &kp MINUS &kp FSLH &kp ASTRK &kp PRCNT &kp UNDER
+&trans &kp PRCNT &kp CARET &kp LBKT &kp RBKT &kp TILDE  &kp AMPS &kp EQUAL &trans   &trans    &trans    &trans
                                        &trans &trans &trans    &trans &trans &trans
             >;
         };
