@@ -2,7 +2,8 @@
  * Piantor Pro BT - toshism layout
  * Ported from the Gergo (QMK) keymap, realigned to Gergo muscle memory:
  * combined SYM (=Gergo SYMB) and NUM (=Gergo NUMB: numbers + F-keys + arrows),
- * plus NUMPAD (=Gergo TEN). See docs/2026-08-17-piantor-layout-design.md
+ * plus NUMPAD (=Gergo TEN) and UML (German umlauts via Compose).
+ * See docs/2026-08-17-piantor-layout-design.md
  */
 
 #include <behaviors.dtsi>
@@ -15,6 +16,7 @@
 #define SYM  1
 #define NUM  2
 #define NPAD 3
+#define UML  4
 
 // Key-position groups for positional home-row mods.
 //   0  1  2  3  4  5      6  7  8  9 10 11
@@ -75,6 +77,34 @@
         };
     };
 
+    // Umlauts via the X11 Compose key: Menu (K_APP), then " + vowel / s + s.
+    // Needs `setxkbmap -option compose:menu` on the host. Hold Shift for capitals.
+    macros {
+        uml_ae: umlaut_ae {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_tap &kp K_APP &kp DQT &kp A>;
+        };
+
+        uml_oe: umlaut_oe {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_tap &kp K_APP &kp DQT &kp O>;
+        };
+
+        uml_ue: umlaut_ue {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_tap &kp K_APP &kp DQT &kp U>;
+        };
+
+        uml_ss: umlaut_ss {
+            compatible = "zmk,behavior-macro";
+            #binding-cells = <0>;
+            bindings = <&macro_tap &kp K_APP &kp S &kp S>;
+        };
+    };
+
     keymap {
         compatible = "zmk,keymap";
 
@@ -83,13 +113,13 @@
             // | TAB  |  Q |  W |  E |  R |  T |     |  Y |  U |  I |  O |  P | DEL |
             // | ESC  |  A |  S | D/A| F/C|  G |     |  H |J/C |K/A |  L |  ; |  '  |
             // | SHFT |  Z |  X |  C |  V | B* |     |  N |  M |  , |  . |  / | SHFT|
-            //          NUM  BKSP/SYM  GUI  |  ENT/NUM  SPC/SYM  SYM
+            //          NUM  BKSP/SYM  GUI  |  ENT/NUM  SPC/SYM  UML
             //   *B = tap B / hold NUMPAD
             bindings = <
 &kp TAB       &kp Q &kp W &kp E       &kp R        &kp T                       &kp Y &kp U        &kp I       &kp O   &kp P    &kp DEL
 &kp ESC       &kp A &kp S &hml LALT D &hml LCTRL F &kp G                       &kp H &hmr RCTRL J &hmr RALT K &kp L   &kp SEMI &kp SQT
 &kp LSHFT     &kp Z &kp X &kp C       &kp V        &lta NPAD B                 &kp N &kp M        &kp COMMA   &kp DOT &kp FSLH &kp RSHFT
-                                &mo NUM  &lt2 SYM BSPC  &kp LGUI    &lt2 NUM RET  &lt2 SYM SPACE  &mo SYM
+                                &mo NUM  &lt2 SYM BSPC  &kp LGUI    &lt2 NUM RET  &lt2 SYM SPACE  &mo UML
             >;
         };
 
@@ -133,6 +163,20 @@
 &trans &bt BT_SEL 0 &bt BT_SEL 1    &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4   &kp N0  &kp N4 &kp N5 &kp N6 &trans &trans
 &bt BT_CLR &rgb_ug RGB_TOG &sys_reset &bootloader &studio_unlock &trans   &kp DOT &kp N1 &kp N2 &kp N3 &trans &trans
                                      &trans &trans &trans    &trans &trans &trans
+            >;
+        };
+
+        umlaut_layer {
+            display-name = "UML";
+            // German umlauts on their base letters. Reached by holding the right outer thumb.
+            // |   |   |   |   |   |   |   |   | ü |   | ö |   |   |
+            // |   | ä | ß |   |   |   |   |   |   |   |   |   |
+            // |   |   |   |   |   |   |   |   |   |   |   |   |
+            bindings = <
+&trans &trans  &trans  &trans &trans &trans      &trans &uml_ue &trans &uml_oe &trans &trans
+&trans &uml_ae &uml_ss &trans &trans &trans      &trans &trans  &trans &trans  &trans &trans
+&trans &trans  &trans  &trans &trans &trans      &trans &trans  &trans &trans  &trans &trans
+                                &trans &trans &trans    &trans &trans &trans
             >;
         };
     };

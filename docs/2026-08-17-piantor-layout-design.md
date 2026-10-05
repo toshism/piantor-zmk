@@ -33,7 +33,7 @@ the herbstluftwm desktop-switch chord, the erase keys), the Gergo behavior is pr
  TAB    Q   W   E    R    T          Y    U    I    O    P    DEL
  ESC    A   S   D    F    G          H    J    K    L    ;    '
  LSFT   Z   X   C    V    B*         N    M    ,    .    /    -
-              NUM   BKSP  SUPER   |  ENTER  SPACE  SYM
+              NUM   BKSP  SUPER   |  ENTER  SPACE  UML
 ```
 
 - `B*` (left-index bottom-inner) = layer-tap: **tap = B, hold = NUMPAD**. This lived on the
@@ -49,12 +49,13 @@ the herbstluftwm desktop-switch chord, the erase keys), the Gergo behavior is pr
 
 ```
  L-out        L-mid          L-in    |  R-in           R-mid           R-out
- NUM (hold)   BKSP / SYM     SUPER   |  ENTER / NUM    SPACE / SYM     SYM (hold)
+ NUM (hold)   BKSP / SYM     SUPER   |  ENTER / NUM    SPACE / SYM     UML (hold)
  momentary    tap=Bksp,      plain   |  tap=Enter,     tap=Space,      momentary
               hold=SYM       LGUI    |  hold=NUM       hold=SYM
 ```
 
-- **SYM** reachable from Backspace (L-mid), Space (R-mid), and R-out - like the Gergo, where both `LT(SYMB,BSPC)` and `LT(SYMB,SPC)` reached SYMB.
+- **SYM** reachable from Backspace (L-mid) and Space (R-mid) - like the Gergo, where both `LT(SYMB,BSPC)` and `LT(SYMB,SPC)` reached SYMB.
+  (R-out was also SYM until it became the UML key.)
 - **NUM** reachable from Enter (R-in) and L-out - like the Gergo `LT(NUMB,ENT)` / `LT(NUMB,ESC)`.
 - **SUPER** (L-in, plain `LGUI`) preserves the **herbstluftwm desktop-switch chord**: hold Super +
   right-hand `U I O` (top) / `M , .` (bottom). Interpreted by hlwm; needs no keyboard-side config.
@@ -67,7 +68,7 @@ the herbstluftwm desktop-switch chord, the erase keys), the Gergo behavior is pr
 
 `.` = transparent (falls through to BASE).
 
-### SYM - hold Backspace / Space / R-out   (= Gergo SYMB)
+### SYM - hold Backspace / Space   (= Gergo SYMB)
 ```
  .    !   @   {   }   |        .   .   .   \   .   .
  .    #   $   (   )   `        +   -   /   *   %   _
@@ -96,15 +97,32 @@ Numbers on top, F-keys on the left hand, arrows/volume on the right - exactly th
   `BT_CLR`, `RGB_TOG`, `sys_reset`, `bootloader`, `studio_unlock` on `LSFT-V` - shifted one column
   left of the Gergo-era `Z-B` row because `B` itself is now the layer key.
 
+### UML - hold R-out   (new; no Gergo equivalent)
+```
+ .    .   .   .   .   .        .   ü   .   ö   .   .      (U O)
+ .    ä   ß   .   .   .        .   .   .   .   .   .      (A S)
+ .    .   .   .   .   .        .   .   .   .   .   .
+```
+- German umlauts on their base letters: `ä` on `A`, `ö` on `O`, `ü` on `U`, `ß` on `S`.
+- Each key is a macro that types an X11 **Compose** sequence: `Menu` (ZMK `K_APP`), then `"` + vowel,
+  or `s s` for `ß`. Hold Shift as well for capitals (`Ä Ö Ü ẞ`) - use right Shift for `Ä`, since
+  left Shift and `A` are both on the left pinky.
+- **Host setup (Linux only):** the Menu key must be the Compose key - `setxkbmap -option compose:menu`
+  in the herbstluftwm autostart. Without it Menu acts as a plain Menu key (some apps open a context
+  menu) and a literal `"a` gets typed. If ibus drops the option
+  after login, set `gsettings set org.freedesktop.ibus.general use-system-keyboard-layout true`.
+  Windows is not supported (it would need WinCompose with Menu as its compose key).
+
 ---
 
 ## Layer / activation summary
 
 | Layer  | Activation                              | Gergo equivalent |
 |--------|-----------------------------------------|------------------|
-| SYM    | Backspace hold, Space hold, R-out hold  | SYMB             |
+| SYM    | Backspace hold, Space hold              | SYMB             |
 | NUM    | Enter hold, L-out hold                  | NUMB             |
 | NUMPAD | left-index `B` hold                      | TEN              |
+| UML    | R-out hold                              | -                |
 
 Handy combos that moved onto the NUMPAD layer (hold left-index `B`, then):
 - `+ C` -> **bootloader** (KEEBART drive for flashing)
