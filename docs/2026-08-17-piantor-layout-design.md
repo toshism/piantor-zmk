@@ -31,12 +31,15 @@ the herbstluftwm desktop-switch chord, the erase keys), the Gergo behavior is pr
 
 ```
  TAB    Q   W   E    R    T          Y    U    I    O    P    DEL
- ESC*   A   S   D    F    G          H    J    K    L    ;    '
- LSFT   Z   X   C    V    B          N    M    ,    .    /    -
+ ESC    A   S   D    F    G          H    J    K    L    ;    '
+ LSFT   Z   X   C    V    B*         N    M    ,    .    /    -
               NUM   BKSP  SUPER   |  ENTER  SPACE  SYM
 ```
 
-- `ESC*` (left-pinky home-row) = layer-tap: **tap = Esc, hold = NUMPAD** (mirrors Gergo `LT(TEN, Tab)`).
+- `B*` (left-index bottom-inner) = layer-tap: **tap = B, hold = NUMPAD**. This lived on the
+  left-pinky `Esc` (mirroring Gergo `LT(TEN, Tab)`) until it was moved off the pinky to cut its
+  load; `B` is a rare enough letter that the hold rarely misfires, and it uses a dedicated
+  `lta` hold-tap with `require-prior-idle-ms` so mid-word `B` still types as `B`.
 - Home-row mods (positional, unchanged from Gergo): `D = LAlt`, `F = LCtl`, `J = RCtl`, `K = RAlt`.
 - `DEL` at top-right (stock-Piantor Backspace position; a proper Delete the Gergo lacked).
 - `\` (backslash) is displaced by `DEL` and lives on the SYM layer.
@@ -81,16 +84,17 @@ Dropped from the Gergo original: the `Alt+1..6` Stumpwm workspace macros.
 Numbers on top, F-keys on the left hand, arrows/volume on the right - exactly the Gergo `NUMB` split.
 (Gergo's bottom-right mouse macros were dropped; Home/End/PgUp/PgDn added in their place.)
 
-### NUMPAD - hold left-pinky (Esc)   (= Gergo TEN + Bluetooth/system keys)
+### NUMPAD - hold left-index `B`   (= Gergo TEN + Bluetooth/system keys)
 ```
  .    .    .    .    .    .          .   7   8   9   .   .      (U I O)
  .    BT0  BT1  BT2  BT3  BT4        0   4   5   6   .   .      (H J K L)
- .    BCLR RGB  RST  BOOT UNLK       .   1   2   3   .   .      (N M , .)
+ BCLR RGB  RST  BOOT UNLK .          .   1   2   3   .   .      (N M , .)
 ```
 - Right hand: the Gergo numpad grid - `7/8/9` on `U/I/O`, `4/5/6` on `J/K/L`, `1/2/3` on `M/,/.`,
   `0` on `H`, `.` on `N`.
 - Left hand: Bluetooth + system keys (the Gergo had none - wired board). `BT_SEL 0-4` on `A-G`;
-  `BT_CLR`, `RGB_TOG`, `sys_reset`, `bootloader`, `studio_unlock` on `Z-B`.
+  `BT_CLR`, `RGB_TOG`, `sys_reset`, `bootloader`, `studio_unlock` on `LSFT-V` - shifted one column
+  left of the Gergo-era `Z-B` row because `B` itself is now the layer key.
 
 ---
 
@@ -100,11 +104,11 @@ Numbers on top, F-keys on the left hand, arrows/volume on the right - exactly th
 |--------|-----------------------------------------|------------------|
 | SYM    | Backspace hold, Space hold, R-out hold  | SYMB             |
 | NUM    | Enter hold, L-out hold                  | NUMB             |
-| NUMPAD | left-pinky (Esc) hold                   | TEN              |
+| NUMPAD | left-index `B` hold                      | TEN              |
 
-Handy combos that moved onto the NUMPAD layer (hold left-pinky Esc, then):
-- `+ V` -> **bootloader** (KEEBART drive for flashing)
-- `+ B` -> **studio_unlock** (ZMK Studio)
+Handy combos that moved onto the NUMPAD layer (hold left-index `B`, then):
+- `+ C` -> **bootloader** (KEEBART drive for flashing)
+- `+ V` -> **studio_unlock** (ZMK Studio)
 - `+ A..G` -> **switch Bluetooth profile** 0-4
 
 ---
@@ -133,7 +137,7 @@ Handy combos that moved onto the NUMPAD layer (hold left-pinky Esc, then):
   1. Run `scripts/flash.sh` **first** (defaults to the left half) - it polls for the bootloader and
      waits. Run it *before* entering bootloader, because the board stops working as a keyboard once
      it's in bootloader mode (this is the ZMK equivalent of `qmk flash` waiting for the device).
-  2. *Then* enter bootloader: hold **left-pinky (Esc/NUMPAD) + `V`** (double-tap physical reset was
+  2. *Then* enter bootloader: hold **left-index `B` (NUMPAD) + `C`** (double-tap physical reset was
      unreliable). The board mounts as `/dev/sda` label `KEEBART`.
   3. The script mounts it, copies the `.uf2`, and exits; the board auto-reboots. BT bonds survive a
      normal keymap flash. (`cp`/`sync` may report the device disconnecting mid-write - that's success.)

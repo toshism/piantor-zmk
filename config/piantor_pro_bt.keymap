@@ -55,6 +55,16 @@
             hold-trigger-on-release;
         };
 
+        lta: layer_tap_alpha {
+            compatible = "zmk,behavior-hold-tap";
+            #binding-cells = <2>;
+            flavor = "balanced";
+            tapping-term-ms = <200>;
+            quick-tap-ms = <200>;
+            require-prior-idle-ms = <150>;
+            bindings = <&mo>, <&kp>;
+        };
+
         lt2: layer_tap {
             compatible = "zmk,behavior-hold-tap";
             #binding-cells = <2>;
@@ -71,14 +81,14 @@
         base_layer {
             display-name = "BASE";
             // | TAB  |  Q |  W |  E |  R |  T |     |  Y |  U |  I |  O |  P | DEL |
-            // | ESC* |  A |  S | D/A| F/C|  G |     |  H |J/C |K/A |  L |  ; |  '  |
-            // | SHFT |  Z |  X |  C |  V |  B |     |  N |  M |  , |  . |  / | SHFT|
+            // | ESC  |  A |  S | D/A| F/C|  G |     |  H |J/C |K/A |  L |  ; |  '  |
+            // | SHFT |  Z |  X |  C |  V | B* |     |  N |  M |  , |  . |  / | SHFT|
             //          NUM  BKSP/SYM  GUI  |  ENT/NUM  SPC/SYM  SYM
-            //   *ESC = tap Esc / hold NUMPAD
+            //   *B = tap B / hold NUMPAD
             bindings = <
 &kp TAB       &kp Q &kp W &kp E       &kp R        &kp T                       &kp Y &kp U        &kp I       &kp O   &kp P    &kp DEL
-&lt2 NPAD ESC &kp A &kp S &hml LALT D &hml LCTRL F &kp G                       &kp H &hmr RCTRL J &hmr RALT K &kp L   &kp SEMI &kp SQT
-&kp LSHFT     &kp Z &kp X &kp C       &kp V        &kp B                       &kp N &kp M        &kp COMMA   &kp DOT &kp FSLH &kp RSHFT
+&kp ESC       &kp A &kp S &hml LALT D &hml LCTRL F &kp G                       &kp H &hmr RCTRL J &hmr RALT K &kp L   &kp SEMI &kp SQT
+&kp LSHFT     &kp Z &kp X &kp C       &kp V        &lta NPAD B                 &kp N &kp M        &kp COMMA   &kp DOT &kp FSLH &kp RSHFT
                                 &mo NUM  &lt2 SYM BSPC  &kp LGUI    &lt2 NUM RET  &lt2 SYM SPACE  &mo SYM
             >;
         };
@@ -114,13 +124,14 @@
         numpad_layer {
             display-name = "NPAD";
             // Right-hand numpad (= Gergo TEN); Bluetooth/system keys on the left.
+            // Reached by holding left-index B.
             // |   |   |   |   |    |     |   | 7 | 8 | 9 |   |   |
             // |   |BT0|BT1|BT2|BT3 |BT4  | 0 | 4 | 5 | 6 |   |   |
-            // |   |BCLR|RGB|RST|BOOT|UNLK| . | 1 | 2 | 3 |   |   |
+            // |BCLR|RGB|RST|BOOT|UNLK|   | . | 1 | 2 | 3 |   |   |
             bindings = <
 &trans &trans       &trans          &trans     &trans      &trans          &trans  &kp N7 &kp N8 &kp N9 &trans &trans
 &trans &bt BT_SEL 0 &bt BT_SEL 1    &bt BT_SEL 2 &bt BT_SEL 3 &bt BT_SEL 4   &kp N0  &kp N4 &kp N5 &kp N6 &trans &trans
-&trans &bt BT_CLR   &rgb_ug RGB_TOG &sys_reset &bootloader &studio_unlock    &kp DOT &kp N1 &kp N2 &kp N3 &trans &trans
+&bt BT_CLR &rgb_ug RGB_TOG &sys_reset &bootloader &studio_unlock &trans   &kp DOT &kp N1 &kp N2 &kp N3 &trans &trans
                                      &trans &trans &trans    &trans &trans &trans
             >;
         };
